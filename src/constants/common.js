@@ -3,15 +3,10 @@ module.exports = {
     ADDED_TO_CART: 1,
     ABANDONED_CART: 2
   },
-  // MSG_SCHEDULE: [
-  //   30 * 60 * 1000, // 30 minutes
-  //   24 * 60 * 60 * 1000, // 1 day
-  //   3 * 24 * 60 * 60 * 1000, // 3 days
-  // ],
   MSG_SCHEDULE: [
-    1 * 60 * 1000, // 30 minutes
-    2 * 60 * 1000, // 1 day
-    3 * 60 * 1000, // 3 days
+    30 * 60 * 1000, // 30 minutes
+    24 * 60 * 60 * 1000, // 1 day
+    3 * 24 * 60 * 60 * 1000, // 3 days
   ],
   MSG_TEMPLATES: [
     {

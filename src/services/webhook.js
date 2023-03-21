@@ -5,9 +5,9 @@ const { sendEmail } = require("../utils/email");
 
 exports.checkoutAbandoned = async (cartId, userId, checkoutUrl) => {
   try {
-    let promises = createMessageSchedule(cartId, userId, checkoutUrl);
+    let messagePromises = createMessageSchedule(cartId, userId, checkoutUrl);
 
-    promises.forEach(async (promise) => {
+    messagePromises.forEach(async (promise) => {
       promise
         .then((value) => {
           console.log(value);
@@ -24,10 +24,9 @@ exports.checkoutAbandoned = async (cartId, userId, checkoutUrl) => {
 let createMessageSchedule = (cartId, userId, checkoutUrl) => {
   try {
     let promises = [];
-    for (let i = 0; i < 3; ++i) {
-      let delay = CONSTANTS.MSG_SCHEDULE[i];
 
-      promises[i] = new Promise((resolve, reject) => {
+    CONSTANTS.MSG_SCHEDULE.forEach((delay, index) => {
+      promises[index] = new Promise(async (resolve, reject) => {
         setTimeout(async () => {
           try {
             let cart = await Cart.findById(cartId).populate(
@@ -38,11 +37,6 @@ let createMessageSchedule = (cartId, userId, checkoutUrl) => {
             //check if cart exists, and if yes, check if order state = 2
             if (cart?.order_state === CONSTANTS.ORDER_STATES.ABANDONED_CART) {
               //check if message already exists with this cartId
-              let subject = CONSTANTS.MSG_TEMPLATES[i].subject;
-              let body = CONSTANTS.MSG_TEMPLATES[i].body
-                .replace(/{{customerName}}/g, cart.userId.name)
-                .replace(/{{checkoutUrl}}/g, checkoutUrl);
-
               let message = await Message.findOne({
                 cartId,
               });
@@ -56,6 +50,11 @@ let createMessageSchedule = (cartId, userId, checkoutUrl) => {
               } else message.attempt += 1;
 
               if (message?.attempt ?? 1 <= 3) {
+                let subject = CONSTANTS.MSG_TEMPLATES[index].subject;
+                let body = CONSTANTS.MSG_TEMPLATES[index].body
+                  .replace(/{{customerName}}/g, cart.userId.name)
+                  .replace(/{{checkoutUrl}}/g, checkoutUrl);
+
                 await message.save();
                 await sendEmail(subject, body, cart.userId.email);
                 resolve("Email sent for Checkout Reminder");
@@ -73,7 +72,7 @@ let createMessageSchedule = (cartId, userId, checkoutUrl) => {
           }
         }, delay);
       });
-    }
+    });
 
     return promises;
   } catch (error) {
