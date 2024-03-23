@@ -24,7 +24,7 @@ module.exports = () => {
   app.use((error, req, res, next) => {
     res.status(500).json({
       status: "Error",
-      reason: error
+      reason: error.message
     });
   });
 

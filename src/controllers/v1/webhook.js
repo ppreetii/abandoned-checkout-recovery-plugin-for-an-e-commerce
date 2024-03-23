@@ -17,14 +17,7 @@ exports.checkoutAbandoned = async (req, res, next) => {
       message: "Checkout Abandon Webhook processed successfully",
     });
   } catch (error) {
-    // Log the error
-    console.error("Error processing Checkout Abandon webhook:", error);
-
-    // Send an error response to the webhook provider
-    res.status(500).send({
-      status: "Fail",
-      message: "Error processing Checkout Abandon webhook",
-    });
+    next(error);
   }
 };
 
@@ -36,13 +29,6 @@ exports.orderPlaced = async (req, res, next) => {
 
     res.sendStatus(200);
   } catch (error) {
-    // Log the error
-    console.error("Error processing Order Placed webhook:", error);
-
-    // Send an error response to the webhook provider
-    res.status(500).send({
-      status: "Fail",
-      message: "Error processing Order Placed webhook",
-    });
+    next(error);
   }
 };

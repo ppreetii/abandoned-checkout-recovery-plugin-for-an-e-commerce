@@ -3,7 +3,7 @@ const Cart = require("../db/models/cart");
 const CONSTANTS = require("../constants/common");
 const users = require("../db/data/user");
 
-exports.insertStaticData = async () => {
+exports.seedUsers = async () => {
   try {
     //insert some static data
     const dbUsers = await User.find();
